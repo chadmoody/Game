@@ -1,0 +1,490 @@
+<html>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="index.js"></script>
+<link type="text/css" rel="stylesheet" href="index.css">
+    <style>
+        #question1{
+         width: 400px;
+         height: 400px;
+         background-color: rgb(0,0,0, .0); 
+         position: absolute;
+        } 
+
+        #wrapper {
+            width: 400px;
+            height:  400px;
+            margin: auto;
+            z-index: -1;
+        }
+
+        #game {
+            position: absolute;
+        }
+            
+
+
+     </style>
+    <body>
+        <div id="wrapper">
+        <canvas id="game" width="400" height="400"></canvas>
+        <div id="question1"></div>
+        
+    
+    
+    </div>
+    <div id="wrapper2">
+    <main>
+        <!-- creating a modal for when quiz ends -->
+        <div class="modal-container" id="score-modal">
+
+            <div class="modal-content-container">
+
+                <h1>Congratulations, Quiz Completed.</h1>
+
+                <div class="grade-details">
+                    <p>Attempts : 10</p>
+                    <p>Wrong Answers : <span id="wrong-answers"></span></p>
+                    <p>Right Answers : <span id="right-answers"></span></p>
+                    <p>Grade : <span id="grade-percentage"></span>%</p>
+                    <p ><span id="remarks"></span></p>
+                </div>
+
+                <div class="modal-button-container">
+                    <button onclick="closeScoreModal()">Continue</button>
+                </div>
+
+            </div>
+        </div>
+<!-- end of modal of quiz details-->
+
+        <div class="game-quiz-container">
+
+            <div class="game-details-container">
+                <h1>Score : <span id="player-score"></span> / 10</h1>
+                <h1> Question : <span id="question-number"></span> / 10</h1>
+            </div>
+
+            <div class="game-question-container">
+                <h1 id="display-question"></h1>
+            </div>
+
+            <div class="game-options-container">
+
+               <div class="modal-container" id="option-modal">
+
+                    <div class="modal-content-container">
+                         <h1>Please Pick An Option</h1>
+
+                         <div class="modal-button-container">
+                            <button onclick="closeOptionModal()">Continue</button>
+                        </div>
+
+                    </div>
+
+               </div>
+
+                <span>
+                    <input type="radio" id="option-one" name="option" class="radio" value="optionA" />
+                    <label for="option-one" class="option" id="option-one-label"></label>
+                </span>
+
+
+                <span>
+                    <input type="radio" id="option-two" name="option" class="radio" value="optionB" />
+                    <label for="option-two" class="option" id="option-two-label"></label>
+                </span>
+
+
+                <span>
+                    <input type="radio" id="option-three" name="option" class="radio" value="optionC" />
+                    <label for="option-three" class="option" id="option-three-label"></label>
+                </span>
+
+
+                <span>
+                    <input type="radio" id="option-four" name="option" class="radio" value="optionD" />
+                    <label for="option-four" class="option" id="option-four-label"></label>
+                </span>
+
+
+            </div>
+
+            <div class="next-button-container">
+                <button onclick="handleNextQuestion()">Next Question</button>
+            </div>
+
+        </div>
+    </main>
+    </div>
+        <div>FlashLight Battery Left: = <span id="timer"></span></div>
+    </body>
+    <script type="text/javascript">
+        var global_context = null;
+        var tileW = 20;
+        var tileH = 20;
+        var mapW = 20;
+        var mapH = 20;
+        var currentSecond = 0, frameCount = 0, framesLastSecond = 0;
+        var lastFrameTime = 0;
+        var player = new Character();
+        var count = 0;
+        var listOfPathIndexes = [];
+        var timeLeft = 110;
+        var keysDown = {
+            37 : false,
+            38 : false,
+            39 : false,
+            40 : false
+        }
+        
+        var gameMap = [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,1,0,1,1,1,1,1,1,0,1,0,0,1,0,0,1,0,1,0,
+        0,1,1,0,1,0,1,0,1,0,1,0,0,1,0,1,1,0,1,0,
+        0,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,0,
+        0,1,0,0,1,0,1,1,1,0,1,1,0,1,0,0,1,1,1,0,
+        0,1,1,0,1,1,1,0,1,1,1,0,0,1,1,0,0,1,0,0,
+        0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,0,0,1,1,0,
+        0,1,0,1,1,1,0,0,1,1,0,1,0,0,1,1,1,1,1,0,
+        0,1,1,0,0,1,0,0,1,1,1,1,1,0,0,0,0,1,0,0,
+        0,1,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,1,1,0,
+        0,1,0,0,1,0,1,1,1,0,1,0,1,0,1,1,1,1,1,0,
+        0,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1,0,
+        0,1,1,0,1,0,0,1,1,1,1,0,0,1,0,0,0,1,1,0,
+        0,1,1,1,1,1,0,1,1,1,0,0,1,0,0,1,1,0,1,0,
+        0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0,
+        0,1,0,1,0,0,0,0,1,0,1,1,1,1,0,1,0,1,1,0,
+        0,1,1,1,0,0,0,0,1,0,1,0,0,0,0,1,1,1,0,0,
+        0,0,1,1,0,0,1,1,1,0,1,1,0,0,1,0,0,1,1,0,
+        0,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+        ];
+        var floorTypes = {
+            wall: 0,
+            floor: 1,
+            credit: 2,
+            battery: 3,
+            danger: 4,
+        }
+        var tileTypes = {
+            0: {color: "grey", floor:floorTypes.wall},
+            1: {color: "lightgrey", floor:floorTypes.floor},
+            2 : {color: "yellow", floor:floorTypes.credit},
+            3 : {color: "green", floor:floorTypes.battery},
+            4 : {color: "lightgrey", floor:floorTypes.danger}
+        }
+
+        $("main").hide();
+
+        
+        function Character(){
+            this.tileFrom = [1,1];
+            this.tileTo = [1,1];
+            this.timeMoved = 0;
+            this.dimensions = [20,20];
+            this.position = [20,20];
+            this.delayMove = 600;
+        }
+        Character.prototype.placeAt = function(x,y){
+            this.tileFrom = [x,y];
+            this.tileTo = [x,y];
+            this.position = [(tileW*x) + ((tileW - this.dimensions[0])), ((tileH*y) + (tileH - this.dimensions[1]))]
+        }
+        Character.prototype.movement = function(t){
+            if(this.tileFrom[0] == this.tileTo[0] && this.tileFrom[1]== this.tileTo[1]){
+                return false;
+            }
+            if((t-this.timeMoved)>=this.delayMove){
+                this.placeAt(this.tileTo[0], this.tileTo[1]);
+            }
+            else{
+                this.position[0] = (this.tileFrom[0] * tileW) + ((tileW - this.dimensions[0])/2);
+                this.position[1] = (this.tileFrom[1] * tileH) + ((tileH - this.dimensions[1])/2);
+
+                if(this.tileTo[0] != this.tileFrom[0]){
+                    var diff = (tileW / this.delayMove) * (t - this.timeMoved);
+                    this.position[0]+= (this.tileTo[0] < this.tileFrom[0] ? 0 - diff : diff);
+                }
+                if(this.tileTo[1] != this.tileFrom[1])
+                {
+                    var diff = (tileH / this.delayMove) * (t-this.timeMoved);
+                    this.position[1]+= (this.tileTo[1]<this.tileFrom[1] ? 0 - diff : diff);
+                }
+                this.position[0] = Math.round(this.position[0]);
+                this.position[1] = Math.round(this.position[1]);
+
+            }
+            return true;
+        }
+        Character.prototype.canMoveTo = function(x,y){
+            if(x < 0 || x>=mapW || y < 0 || y >=mapH){
+                return false;
+            }
+            if((tileTypes[gameMap[toIndex(x,y)]].floor != floorTypes.floor)) {
+                if((tileTypes[gameMap[toIndex(x,y)]].floor != floorTypes.credit)){
+                    if(tileTypes[gameMap[toIndex(x,y)]].floor != floorTypes.battery){
+                        if(tileTypes[gameMap[toIndex(x,y)]].floor != floorTypes.danger)
+                    return false;
+                    }
+                }
+            }
+            console.log(player.position);
+            
+            
+            if(tileTypes[gameMap[toIndex(x,y)]].floor == floorTypes.credit){
+                creditLogic(x,y)
+            }
+            if(tileTypes[gameMap[toIndex(x,y)]].floor == floorTypes.battery){
+                batteryLogic(x, y);
+            }
+            if(tileTypes[gameMap[toIndex(x,y)]].floor == floorTypes.danger){
+                dangerLogic(x, y);
+            }
+
+            if(count == 5){
+                /*
+                CSS AND DESINGER HAVE ACCESS TO LOGIC HERE
+                */
+                count++;
+                alert("game over!!!");
+                location.reload()
+            }
+            return true;
+        }
+        Character.prototype.canMoveUp = function(){ 
+            return this.canMoveTo(this.tileFrom[0], this.tileFrom[1]-1);
+        };
+        Character.prototype.canMoveDown = function(){
+             return this.canMoveTo(this.tileFrom[0], this.tileFrom[1]+1); 
+        };
+        Character.prototype.canMoveLeft = function(){ 
+            return this.canMoveTo(this.tileFrom[0]-1, this.tileFrom[1]); 
+        };
+        Character.prototype.canMoveRight = function(){
+            return this.canMoveTo(this.tileFrom[0]+1, this.tileFrom[1]);
+        };
+
+        Character.prototype.moveLeft = function(t){
+            this.tileTo[0]-=1; this.timeMoved = t;
+        };
+        Character.prototype.moveRight = function(t){
+            this.tileTo[0]+=1; this.timeMoved = t;
+        };
+        Character.prototype.moveUp = function(t){
+            this.tileTo[1]-=1; this.timeMoved = t;
+        };
+        Character.prototype.moveDown = function(t){ 
+            this.tileTo[1]+=1; this.timeMoved = t; 
+        };
+
+        function toIndex(x, y){
+            return  ((y * mapW + x));
+        }
+        
+        
+        window.onload = function(){
+            global_context = document.getElementById('game').getContext('2d');
+            requestAnimationFrame(Game);
+            creditStartLocations();
+            NextQuestion(0);
+            
+            window.addEventListener("keydown", function(e) {
+                if(e.keyCode>=37 && e.keyCode<=40){
+                    keysDown[e.keyCode] = true;
+                }
+            })
+            window.addEventListener("keyup", function(e) {
+                if(e.keyCode>=37 && e.keyCode<=40){
+                    keysDown[e.keyCode] = false;
+                }
+            })
+            startTimer();
+            
+            
+        };
+        function Game(){
+            if(global_context==null){
+                return;
+            }
+            
+            var currentFrameT = Date.now();
+            var timeE = currentFrameT - lastFrameTime;
+            
+            var sec = Math.floor(Date.now()/1000);
+            if(sec!=currentSecond)
+            {
+                currentSecond = sec;
+                framesLastSecond = frameCount;
+                frameCount = 1;
+            }
+            else { frameCount++; }
+
+            if(!player.movement(currentFrameT)){
+                if(keysDown[38] && player.canMoveUp())		{ player.moveUp(currentFrameT); }
+                else if(keysDown[40] && player.canMoveDown())	{ player.moveDown(currentFrameT); }
+                else if(keysDown[37] && player.canMoveLeft())	{ player.moveLeft(currentFrameT); }
+                else if(keysDown[39] && player.canMoveRight())	{ player.moveRight(currentFrameT); }
+            }
+            for(var i = 0; i < mapH; i++){
+                for(var x = 0; x < mapW; x++){
+                    global_context.fillStyle = tileTypes[gameMap[toIndex(x,i)]].color;
+                    
+                    global_context.fillRect(player.position[0], player.position[1], player.dimensions[0], player.dimensions[1]);
+
+                    global_context.fillRect(x*tileW, i*tileH, tileW, tileH);
+                }
+            }
+        global_context.fillStyle = "blue";
+        global_context.fillRect(player.position[0], player.position[1], player.dimensions[0], player.dimensions[1]);
+        lastFrameTime = currentFrameT;
+        requestAnimationFrame(Game);
+            
+        }
+        var cdcount;
+        $(document).ready(function () {
+                cdcount = 110;
+                cdreset();
+                countdown();
+        });
+        var t, count;
+        /* puts number of seconds on screen */
+        function cddisplay() {
+            document.getElementById('timer').innerHTML = count;
+        }
+
+        function countdown() {
+            /* starts countdown */
+            cddisplay();
+            FlashLight();
+            if (count == 0) {
+              $('.wrapper').css('background-color', 'blue');
+                /* time is up */
+            } else if(count<0) {
+                /* you cant count down past 0 */ 
+                count=0;
+            }else {
+                 /* start counting down from sec amount */ 
+                 /* count-- calculation  */
+                $('.wrapper').css('background-color', 'grey');
+                count--;
+                t = setTimeout(countdown, 1000);
+            }
+        }
+
+        function cdpause() {
+            /* pauses countdown */
+            clearTimeout(t);
+        }
+
+        function cdreset() {
+            /* resets countdown to sec amount */
+            cdpause();
+            count = cdcount;
+            cddisplay();
+        }  
+ 
+        function creditStartLocations(){
+            for(var i = 0; i < gameMap.length; i++){
+                if(gameMap[i] == 1 && i ){
+                    listOfPathIndexes.push(i);
+                }    
+            }
+            var g1 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g2 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g3 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g4 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g5 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            gameMap[listOfPathIndexes[g1]] = 2;
+            gameMap[listOfPathIndexes[g2]] = 2;
+            gameMap[listOfPathIndexes[g3]] = 2;
+            gameMap[listOfPathIndexes[g4]] = 2;
+            gameMap[listOfPathIndexes[g5]] = 2;
+
+            for(var i = 0; i < gameMap.length; i++){
+                if(gameMap[i] == 1 && i ){
+                    listOfPathIndexes.push(i);
+                }    
+            }
+            var g1 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g2 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g3 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            gameMap[listOfPathIndexes[g1]] = 3;
+            gameMap[listOfPathIndexes[g2]] = 3;
+            gameMap[listOfPathIndexes[g3]] = 3;
+
+            for(var i = 0; i < gameMap.length; i++){
+                if(gameMap[i] == 1 && i ){
+                    listOfPathIndexes.push(i);
+                }    
+            }
+            var g1 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g2 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g3 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g4 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g5 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g6 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g7 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g8 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g9 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            var g10 =  Math.floor(Math.random() * listOfPathIndexes.length);
+            gameMap[listOfPathIndexes[g1]] = 4;
+            gameMap[listOfPathIndexes[g2]] = 4;
+            gameMap[listOfPathIndexes[g3]] = 4;
+            gameMap[listOfPathIndexes[g4]] = 4;
+            gameMap[listOfPathIndexes[g5]] = 4;
+            gameMap[listOfPathIndexes[g6]] = 4;
+            gameMap[listOfPathIndexes[g7]] = 4;
+            gameMap[listOfPathIndexes[g8]] = 4;
+            gameMap[listOfPathIndexes[g9]] = 4;
+            gameMap[listOfPathIndexes[g10]] = 4;
+        }
+        function FlashLight(){
+        console.log("hello");
+            var element = document.getElementById("");
+            if(count > 110)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.1)";
+            else if(count > 90)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.2)";
+            else if(count > 80)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.3)";
+            else if(count > 70)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.4)";
+            else if(count > 60)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.5)";
+            else if(count > 50)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.6)";
+            else if(count > 40)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.7)";
+            else if(count > 30)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.8)";
+            else if(count > 20)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.9)";
+            else if(count > 10)
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,1)";
+        }
+
+        function creditLogic(x,y){
+            gameMap[toIndex(x,y)] = 1; 
+            $("main").toggle();
+            $("#wrapper").toggle();
+        }
+        function batteryLogic(x,y){
+            gameMap[toIndex(x,y)] = 1;
+            cdreset();
+            countdown();
+        }
+        function dangerLogic(x,y){
+            gameMap[toIndex(x,y)] = 1;
+            
+            alert ("DANGER BLOCK!!!!");
+        }
+                
+
+    </script>
+    
+
+
+
+</html>
+
+
