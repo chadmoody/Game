@@ -25,6 +25,7 @@
 
      </style>
     <body>
+        <div>FlashLight Battery Left: = <span id="timer"></span></div>
         <div id="wrapper">
         <canvas id="game" width="400" height="400"></canvas>
         <div id="question1"></div>
@@ -116,7 +117,7 @@
         </div>
     </main>
     </div>
-        <div>FlashLight Battery Left: = <span id="timer"></span></div>
+        
     </body>
     <script type="text/javascript">
         var global_context = null;
@@ -130,6 +131,9 @@
         var count = 0;
         var listOfPathIndexes = [];
         var timeLeft = 110;
+        var tileSet = null;
+        var tilesetURL = "allen.png";
+        tileSetLoaded = null;
         var keysDown = {
             37 : false,
             38 : false,
@@ -167,12 +171,20 @@
             danger: 4,
         }
         var tileTypes = {
-            0: {color: "grey", floor:floorTypes.wall},
-            1: {color: "lightgrey", floor:floorTypes.floor},
-            2 : {color: "yellow", floor:floorTypes.credit},
-            3 : {color: "green", floor:floorTypes.battery},
-            4 : {color: "lightgrey", floor:floorTypes.danger}
+            0: {color: "grey", floor:floorTypes.wall, sprite:[{x: 0, y:0, w:40, h:40}]},
+            1: {color: "lightgrey", floor:floorTypes.floor, sprite:[{x: 0, y:0, w:40, h:40}]},
+            2 : {color: "yellow", floor:floorTypes.credit, sprite:[{x: 0, y:0, w:40, h:40}]},
+            3 : {color: "green", floor:floorTypes.battery, sprite:[{x: 0, y:0, w:40, h:40}]},
+            4 : {color: "lightgrey", floor:floorTypes.danger, sprite:[{x: 0, y:0, w:40, h:40}]}
         }
+
+        /*var directions = {
+            up: 0,
+            right: 1,
+            down: 2,
+            left: 3
+        }
+        */
 
         $("main").hide();
 
@@ -184,7 +196,14 @@
             this.dimensions = [20,20];
             this.position = [20,20];
             this.delayMove = 600;
+            this.health = 100;
+
+            /*this.sprite = {};
+            this.sprites[directions.up] = [{x:0, y:120, w:40, h:40}];
+            this.sprites[directions.up] = [{x:0, y:120, w:40, h:40}];
+            */
         }
+
         Character.prototype.placeAt = function(x,y){
             this.tileFrom = [x,y];
             this.tileTo = [x,y];
@@ -299,11 +318,25 @@
                 }
             })
             startTimer();
+            $("main").hide();
             
+            tileset = new Image();
+            tileset.onerror = function() {
+                ctx = null;
+                alert("Failed Loading Images, refresh page!");
+            }
+            tileset.onload = function(){
+                tileSetLoaded = true;
+            }
+            tileset.src = tilesetURL;
             
         };
         function Game(){
             if(global_context==null){
+                return;
+            }
+            if(!tileSetLoaded){
+                requestAnimationFrame(Game);
                 return;
             }
             
@@ -327,11 +360,13 @@
             }
             for(var i = 0; i < mapH; i++){
                 for(var x = 0; x < mapW; x++){
-                    global_context.fillStyle = tileTypes[gameMap[toIndex(x,i)]].color;
-                    
-                    global_context.fillRect(player.position[0], player.position[1], player.dimensions[0], player.dimensions[1]);
+                    var tile = tileTypes[gameMap[toIndex(x,y)]];
+                    global_context.drawImage(tileset,
+                    tile.sprite[0].x, tile.sprite[0].y, tile.sprite[0].w, tile.sprite[0].h,
+                    viewport.offset[0] + (x*tileW), viewport.offset[1] + (y*tileH),
+                    tileW, tileH);
 
-                    global_context.fillRect(x*tileW, i*tileH, tileW, tileH);
+
                 }
             }
         global_context.fillStyle = "blue";
@@ -389,54 +424,32 @@
                     listOfPathIndexes.push(i);
                 }    
             }
-            var g1 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g2 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g3 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g4 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g5 =  Math.floor(Math.random() * listOfPathIndexes.length);
+
+            for (var x = 0; x < 10; x++){
+            var g1 =  Math.floor(Math.random() * listOfPathIndexes.length); 
             gameMap[listOfPathIndexes[g1]] = 2;
-            gameMap[listOfPathIndexes[g2]] = 2;
-            gameMap[listOfPathIndexes[g3]] = 2;
-            gameMap[listOfPathIndexes[g4]] = 2;
-            gameMap[listOfPathIndexes[g5]] = 2;
+        }
+           
 
             for(var i = 0; i < gameMap.length; i++){
                 if(gameMap[i] == 1 && i ){
                     listOfPathIndexes.push(i);
                 }    
             }
-            var g1 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g2 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g3 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            gameMap[listOfPathIndexes[g1]] = 3;
-            gameMap[listOfPathIndexes[g2]] = 3;
-            gameMap[listOfPathIndexes[g3]] = 3;
+            for (var x = 0; x < 3; x++){
+                var g1 =  Math.floor(Math.random() * listOfPathIndexes.length); 
+                gameMap[listOfPathIndexes[g1]] = 3;
+            }
 
             for(var i = 0; i < gameMap.length; i++){
                 if(gameMap[i] == 1 && i ){
                     listOfPathIndexes.push(i);
                 }    
             }
-            var g1 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g2 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g3 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g4 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g5 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g6 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g7 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g8 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g9 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            var g10 =  Math.floor(Math.random() * listOfPathIndexes.length);
-            gameMap[listOfPathIndexes[g1]] = 4;
-            gameMap[listOfPathIndexes[g2]] = 4;
-            gameMap[listOfPathIndexes[g3]] = 4;
-            gameMap[listOfPathIndexes[g4]] = 4;
-            gameMap[listOfPathIndexes[g5]] = 4;
-            gameMap[listOfPathIndexes[g6]] = 4;
-            gameMap[listOfPathIndexes[g7]] = 4;
-            gameMap[listOfPathIndexes[g8]] = 4;
-            gameMap[listOfPathIndexes[g9]] = 4;
-            gameMap[listOfPathIndexes[g10]] = 4;
+            for (var x = 0; x < 10; x++){
+                var g1 =  Math.floor(Math.random() * listOfPathIndexes.length); 
+                gameMap[listOfPathIndexes[g1]] = 4;
+            }
         }
         function FlashLight(){
         console.log("hello");
@@ -467,6 +480,8 @@
             gameMap[toIndex(x,y)] = 1; 
             $("main").toggle();
             $("#wrapper").toggle();
+            cdpause();
+            
         }
         function batteryLogic(x,y){
             gameMap[toIndex(x,y)] = 1;
@@ -475,8 +490,7 @@
         }
         function dangerLogic(x,y){
             gameMap[toIndex(x,y)] = 1;
-            
-            alert ("DANGER BLOCK!!!!");
+            player.health() -= 10;
         }
                 
 
