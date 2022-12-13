@@ -376,28 +376,33 @@ function unCheckRadioButtons() {
 function handleEndGame() {
     let remark = null
     let remarkColor = null
+    let playerGrade = null
 
     
     if (wrongAttempt <= 3) {
         remark = "Excellent, Keep the good work going."
         remarkColor = "green"
+        playerGrade = "Pro"
     }
     else if (wrongAttempt >= 4 && wrongAttempt < 7) {
         remark = "Average, You can do better."
         remarkColor = "orange"
+        playerGrade = "Amature"
     }
     else if (wrongAttempt <= 7) {
         remark = "Bad, Keep Practicing."
         remarkColor = "red"
+        playerGrade = "Beginner"
+
     }
+    
     
 
     
     document.getElementById('remarks').innerHTML = remark
     document.getElementById('remarks').style.color = remarkColor
-    
+    document.getElementById('grade-percentage').innerHTML = playerGrade
     document.getElementById('wrong-answers').innerHTML = wrongAttempt
-    
     document.getElementById('score-modal').style.display = "flex"
 
 }
