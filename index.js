@@ -416,7 +416,7 @@ function closeScoreModal() {
     shuffledQuestions = []
     NextQuestion(indexNumber)
     document.getElementById('score-modal').style.display = "none"
-    window.location.reload();
+    
 }
 
 
