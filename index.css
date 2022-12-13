@@ -1,3 +1,7 @@
+/*Chad, Jacob, Kyle*/
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 *{
     margin: 0;
     padding: 0;
@@ -11,6 +15,9 @@ html, body{
 
 body{
     font-family: 'Montserrat', serif;
+    background-color: rgb(0, 0, 0);
+    overflow-x: hidden;
+    overflow-y: hidden;
 
 }
 
@@ -18,6 +25,7 @@ main{
     width: 100%;
     min-height: 100vh;
     display: flex;
+    color: white;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -31,24 +39,32 @@ main{
     width: 40rem;
     height: 30rem;
     position: absolute;
-    background-color: lightgray;
+    background-color: rgb(0, 0, 0);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
     border-radius: 30px;
+    top: 100px;
+    font-family: 'Press Start 2P', cursive;
 }
+.option{
+    color: ghostwhite;
+    font-size: 12px;
 
+}
 .game-details-container{
     width: 80%;
     height: 4rem;
     display: flex;
     justify-content: space-around;
     align-items: center;
+    font-family: 'Press Start 2P', cursive;
 }
 
 .game-details-container h1{
     font-size: 1.2rem;
+    font-family: 'Press Start 2P', cursive;
 }
 
 .game-question-container{
@@ -57,14 +73,16 @@ main{
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid darkgray;
+    border: 2px solid rgb(0, 0, 0);
     border-radius: 25px;
+    font-family: 'Press Start 2P', cursive;
 }
 
 .game-question-container h1{
     font-size: 1.1rem;
     text-align: center;
     padding: 3px;
+    font-family: 'Press Start 2P', cursive;
 }
 
 .game-options-container{
@@ -117,17 +135,22 @@ input[type=radio]:checked ~ .option {
     height: 3rem;
     display: flex;
     justify-content: center;
+    font-family: 'Press Start 2P', cursive;
+    
+    
 }
 .next-button-container button{
     width: 8rem;
     height: 2rem;
     border-radius: 10px;
     background: none;
-    color: rgb(25, 25, 25);
+    color: ghostwhite;
     font-weight: 600;
-    border: 2px solid gray;
+    border: 2px solid rgb(0, 0, 0);
     cursor: pointer;
     outline: none;
+    border: 2px solid darkgray;
+    font-family: 'Press Start 2P', cursive;
 }
 .next-button-container button:hover{
     background-color: rgb(143, 93, 93);
@@ -206,6 +229,49 @@ input[type=radio]:checked ~ .option {
     background-color: rgb(83, 82, 82);
 }
 
+#player-score-top {
+    margin-top: 150px;
+    max-width: 400px;
+    position: relative;
+    font-family: 'Press Start 2P', cursive;
+    margin-left: 20px;
+    color: white;
+}
+
+#battery-time {
+    margin-top: 150px;
+    max-width: 400px;
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+}
+
+#wrapper-3 {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+}
+
+#you-lose {
+    font-family: 'Press Start 2P', cursive;
+    color: red;
+    font-size: 50px;
+    justify-content: center;
+    display: flex;
+    margin-top: 100px;
+}
+
+#button-lose {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-family: 'Press Start 2P', cursive;
+    text-decoration: none;
+    color: white;
+}
+
+a:-webkit-any-link {
+    text-decoration: none;
+}
 @media(min-width : 300px) and (max-width : 350px){
     .game-quiz-container{
         width: 90%;

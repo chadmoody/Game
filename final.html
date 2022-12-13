@@ -6,7 +6,7 @@
         #question1{
          width: 400px;
          height: 400px;
-         background-color: rgb(0,0,0, .0); 
+         background-color: rgba(146, 24, 24, 0); 
          position: absolute;
         } 
 
@@ -21,11 +21,15 @@
             position: absolute;
         }
             
-
+/* Andrew Code */  
 
      </style>
     <body>
-        <div>FlashLight Battery Left: = <span id="timer"></span></div>
+        <div id="wrapper-3">
+        <div id="battery-time">Battery: <span id="timer"></span></div>
+        <div id="player-score-top">Credits Collected: <span id="player-score"></span>/10</div></div><br>
+        <div id="you-lose">YOU LOSE</div>
+        <a href="homepage.html" id="button-lose">Try Again</a>
         <div id="wrapper">
         <canvas id="game" width="400" height="400"></canvas>
         <div id="question1"></div>
@@ -43,9 +47,8 @@
                 <h1>Congratulations, Quiz Completed.</h1>
 
                 <div class="grade-details">
-                    <p>Attempts : 10</p>
                     <p>Wrong Answers : <span id="wrong-answers"></span></p>
-                    <p>Right Answers : <span id="right-answers"></span></p>
+                    <p>Credits Collected : <span id="right-answers"></span></p>
                     <p>Grade : <span id="grade-percentage"></span>%</p>
                     <p ><span id="remarks"></span></p>
                 </div>
@@ -61,7 +64,6 @@
         <div class="game-quiz-container">
 
             <div class="game-details-container">
-                <h1>Score : <span id="player-score"></span> / 10</h1>
                 <h1> Question : <span id="question-number"></span> / 10</h1>
             </div>
 
@@ -117,8 +119,10 @@
         </div>
     </main>
     </div>
-        
+ <!-- Hunter Code-->  
+ <!-- Chad helped here Code-->  
     </body>
+
     <script type="text/javascript">
         var global_context = null;
         var tileW = 20;
@@ -132,8 +136,8 @@
         var listOfPathIndexes = [];
         var timeLeft = 110;
         var tileSet = null;
-        var tilesetURL = "allen.png";
-        tileSetLoaded = null;
+        //var tilesetURL = "allen.png";
+        //tileSetLoaded = null;
         var keysDown = {
             37 : false,
             38 : false,
@@ -167,28 +171,22 @@
             wall: 0,
             floor: 1,
             credit: 2,
-            battery: 3,
-            danger: 4,
+            battery: 3
         }
         var tileTypes = {
-            0: {color: "grey", floor:floorTypes.wall, sprite:[{x: 0, y:0, w:40, h:40}]},
-            1: {color: "lightgrey", floor:floorTypes.floor, sprite:[{x: 0, y:0, w:40, h:40}]},
-            2 : {color: "yellow", floor:floorTypes.credit, sprite:[{x: 0, y:0, w:40, h:40}]},
-            3 : {color: "green", floor:floorTypes.battery, sprite:[{x: 0, y:0, w:40, h:40}]},
-            4 : {color: "lightgrey", floor:floorTypes.danger, sprite:[{x: 0, y:0, w:40, h:40}]}
+            0: {color: "#0A460C", floor:floorTypes.wall},
+            1: {color: "#33272A", floor:floorTypes.floor},
+            2 : {color: "yellow", floor:floorTypes.credit},
+            3 : {color: "#FF8000", floor:floorTypes.battery},
+            
         }
-
-        /*var directions = {
-            up: 0,
-            right: 1,
-            down: 2,
-            left: 3
-        }
-        */
 
         $("main").hide();
+        $("#you-lose").toggle();
+        $("#button-lose").toggle();
 
         
+
         function Character(){
             this.tileFrom = [1,1];
             this.tileTo = [1,1];
@@ -198,10 +196,6 @@
             this.delayMove = 600;
             this.health = 100;
 
-            /*this.sprite = {};
-            this.sprites[directions.up] = [{x:0, y:120, w:40, h:40}];
-            this.sprites[directions.up] = [{x:0, y:120, w:40, h:40}];
-            */
         }
 
         Character.prototype.placeAt = function(x,y){
@@ -300,7 +294,7 @@
             return  ((y * mapW + x));
         }
         
-        
+       
         window.onload = function(){
             global_context = document.getElementById('game').getContext('2d');
             requestAnimationFrame(Game);
@@ -319,27 +313,13 @@
             })
             startTimer();
             $("main").hide();
-            
-            tileset = new Image();
-            tileset.onerror = function() {
-                ctx = null;
-                alert("Failed Loading Images, refresh page!");
-            }
-            tileset.onload = function(){
-                tileSetLoaded = true;
-            }
-            tileset.src = tilesetURL;
-            
+
         };
         function Game(){
             if(global_context==null){
                 return;
             }
-            if(!tileSetLoaded){
-                requestAnimationFrame(Game);
-                return;
-            }
-            
+
             var currentFrameT = Date.now();
             var timeE = currentFrameT - lastFrameTime;
             
@@ -360,11 +340,9 @@
             }
             for(var i = 0; i < mapH; i++){
                 for(var x = 0; x < mapW; x++){
-                    var tile = tileTypes[gameMap[toIndex(x,y)]];
-                    global_context.drawImage(tileset,
-                    tile.sprite[0].x, tile.sprite[0].y, tile.sprite[0].w, tile.sprite[0].h,
-                    viewport.offset[0] + (x*tileW), viewport.offset[1] + (y*tileH),
-                    tileW, tileH);
+                    global_context.fillStyle = tileTypes[gameMap[toIndex(x,i)]].color;
+                    global_context.fillRect(player.position[0], player.position[1], player.dimensions[0], player.dimensions[1]);
+                    global_context.fillRect(x*tileW, i*tileH, tileW, tileH);
 
 
                 }
@@ -375,9 +353,11 @@
         requestAnimationFrame(Game);
             
         }
+
+        /*Andrew Code*/
         var cdcount;
         $(document).ready(function () {
-                cdcount = 110;
+                cdcount = 100;
                 cdreset();
                 countdown();
         });
@@ -418,27 +398,43 @@
             cddisplay();
         }  
  
+//Hunter and Chad 
+
         function creditStartLocations(){
+            
             for(var i = 0; i < gameMap.length; i++){
                 if(gameMap[i] == 1 && i ){
                     listOfPathIndexes.push(i);
                 }    
             }
-
-            for (var x = 0; x < 10; x++){
-            var g1 =  Math.floor(Math.random() * listOfPathIndexes.length); 
-            gameMap[listOfPathIndexes[g1]] = 2;
-        }
+            recordedCredits = [];
+            while (recordedCredits.length != 10){
+                var g1 =  Math.floor(Math.random() * listOfPathIndexes.length); 
+                if(!recordedCredits.includes(g1)){
+                    gameMap[listOfPathIndexes[g1]] = 2;
+                    recordedCredits.push(g1);
+                    
+                }
+                else if(recordedCredits.includes(g1)){
+                    console.log(g1, recordedCredits);
+                }
+            }
            
 
             for(var i = 0; i < gameMap.length; i++){
                 if(gameMap[i] == 1 && i ){
                     listOfPathIndexes.push(i);
+                    
+
                 }    
             }
-            for (var x = 0; x < 3; x++){
+            recordedBatteries = [];
+            while(recordedBatteries.length != 3){
                 var g1 =  Math.floor(Math.random() * listOfPathIndexes.length); 
-                gameMap[listOfPathIndexes[g1]] = 3;
+                if(!recordedCredits.includes(g1) && !recordedCredits.includes(g1)){
+                    gameMap[listOfPathIndexes[g1]] = 3;
+                    recordedBatteries.push(g1);
+                }
             }
 
             for(var i = 0; i < gameMap.length; i++){
@@ -446,34 +442,38 @@
                     listOfPathIndexes.push(i);
                 }    
             }
-            for (var x = 0; x < 10; x++){
-                var g1 =  Math.floor(Math.random() * listOfPathIndexes.length); 
-                gameMap[listOfPathIndexes[g1]] = 4;
-            }
+
+//Andrew code
+
         }
         function FlashLight(){
-        console.log("hello");
+        
             var element = document.getElementById("");
-            if(count > 110)
+            if(count > 100)
                 document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.1)";
             else if(count > 90)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.2)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.15)";
             else if(count > 80)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.3)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.2)";
             else if(count > 70)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.4)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.2.5)";
             else if(count > 60)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.5)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.3)";
             else if(count > 50)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.6)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.4)";
             else if(count > 40)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.7)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.5)";
             else if(count > 30)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.8)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.6)";
             else if(count > 20)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.9)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.7)";
             else if(count > 10)
-                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,1)";
+                document.getElementById("question1").style.backgroundColor= "rgba(0,0,0,.8)";
+            else if(count==0){
+                $("#wrapper").toggle();
+                $("#you-lose").toggle();
+                $("#button-lose").toggle();
+            }
         }
 
         function creditLogic(x,y){

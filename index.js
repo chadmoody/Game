@@ -1,6 +1,8 @@
+//Kyle
+
 const questions = [
     {
-        question: "How many days makes a week ?",
+        question: "How many days in a week ?",
         optionA: "10 days",
         optionB: "14 days",
         optionC: "5 days",
@@ -9,7 +11,7 @@ const questions = [
     },
 
     {
-        question: "How many players are allowed on a soccer pitch ?",
+        question: "How many players are allowed on a soccer field ?",
         optionA: "10 players",
         optionB: "11 players",
         optionC: "9 players",
@@ -27,7 +29,7 @@ const questions = [
     },
 
     {
-        question: "30 days has ______ ?",
+        question: "Which month has 30 days ?",
         optionA: "January",
         optionB: "December",
         optionC: "June",
@@ -36,7 +38,7 @@ const questions = [
     },
 
     {
-        question: "How manay hours can be found in a day ?",
+        question: "How manay hours are in one day ?",
         optionA: "30 hours",
         optionB: "38 hours",
         optionC: "48 hours",
@@ -72,20 +74,20 @@ const questions = [
     },
 
     {
-        question: "Which of these numbers is an odd number ?",
-        optionA: "Ten",
-        optionB: "Twelve",
-        optionC: "Eight",
-        optionD: "Eleven",
+        question: "How many stars are on the U.S. flag ?",
+        optionA: "None",
+        optionB: "Twenty-Five",
+        optionC: "Thirteen",
+        optionD: "Fifty",
         correctOption: "optionD"
     },
 
     {
-        question: `"You Can't see me" is a popular saying by`,
-        optionA: "Eminem",
-        optionB: "Bill Gates",
-        optionC: "Chris Brown",
-        optionD: "John Cena",
+        question: "What is the capital of Pennsylvania ?",
+        optionA: "Annville",
+        optionB: "Lebanon",
+        optionC: "Reading",
+        optionD: "Harrisburg",
         correctOption: "optionD"
     },
 
@@ -99,11 +101,11 @@ const questions = [
     },
 
     {
-        question: "The longest river in the United Kingdom is ?",
-        optionA: "River Severn",
-        optionB: "River Mersey",
-        optionC: "River Trent",
-        optionD: "River Tweed",
+        question: "The longest river in the United States is ?",
+        optionA: "Missouri River",
+        optionB: "Delaware River",
+        optionC: "Colorado River",
+        optionD: "Rio Grande",
         correctOption: "optionA"
     },
 
@@ -118,11 +120,11 @@ const questions = [
     },
 
     {
-        question: "Which national team won the football World cup in 2018 ?",
-        optionA: "England",
-        optionB: "Brazil",
-        optionC: "Germany",
-        optionD: "France",
+        question: "Which team won the superbowl last year ?",
+        optionA: "Atlanta",
+        optionB: "Dallas Cowboys",
+        optionC: "Green Bay Packers",
+        optionD: "Los Angeles Rams",
         correctOption: "optionD"
     },
 
@@ -136,7 +138,7 @@ const questions = [
     },
 
     {
-        question: "How man states does Nigeria have ?",
+        question: "How man states does the United States have ?",
         optionA: "24",
         optionB: "30",
         optionC: "36",
@@ -145,11 +147,11 @@ const questions = [
     },
 
     {
-        question: "____ is the capital of Nigeria ?",
-        optionA: "Abuja",
-        optionB: "Lagos",
-        optionC: "Calabar",
-        optionD: "Kano",
+        question: "____ is the capital of the United States ?",
+        optionA: "Washington D.C.",
+        optionB: "New York City",
+        optionC: "Detroit",
+        optionD: "Los Angeles",
         correctOption: "optionA"
     },
 
@@ -163,20 +165,20 @@ const questions = [
     },
 
     {
-        question: "What is the capital of Germany ?",
-        optionA: "Georgia",
-        optionB: "Missouri",
-        optionC: "Oklahoma",
-        optionD: "Berlin",
+        question: "Who created the first car ?",
+        optionA: "Andrew Carnegie",
+        optionB: "Warren Buffet",
+        optionC: "Elon Musk",
+        optionD: "Henry Ford",
         correctOption: "optionD"
     },
 
     {
-        question: "How many sides does an hexagon have ?",
-        optionA: "Six",
-        optionB: "Sevene",
-        optionC: "Four",
-        optionD: "Five",
+        question: "When did the United States land on the moon ?",
+        optionA: "1969",
+        optionB: "1973",
+        optionC: "1955",
+        optionD: "2005",
         correctOption: "optionA"
     },
 
@@ -199,7 +201,7 @@ const questions = [
     },
 
     {
-        question: "where is the smallest bone in human body located?",
+        question: "Where is the smallest bone in human body located ?",
         optionA: "Toes",
         optionB: "Ears",
         optionC: "Fingers",
@@ -208,11 +210,11 @@ const questions = [
     },
 
     {
-        question: "How many hearts does an Octopus have ?",
-        optionA: "One",
-        optionB: "Two",
-        optionC: "Three",
-        optionD: "Four",
+        question: "What year was the United States founded ?",
+        optionA: "1704",
+        optionB: "1492",
+        optionC: "1776",
+        optionD: "1750",
         correctOption: "optionC"
     },
 
@@ -227,6 +229,9 @@ const questions = [
 
 ]
 
+//Andrew Code
+//Hunter Code
+//Chad Code
 
 let shuffledQuestions = [] 
 
@@ -240,6 +245,7 @@ function handleQuestions() {
         }
     }
 }
+
 
 
 let questionNumber = 1 //current question number
@@ -289,6 +295,15 @@ function checkForAnswer() {
             setTimeout(() => {
                 questionNumber++
             }, 1000)
+
+            if (playerScore <= 9) {
+                setTimeout(() => {
+                    $("main").toggle();
+                    $("#wrapper").toggle();
+                    countdown();
+                }, 1000)
+            }
+
         }
 
         else if (option.checked && option.value !== currentQuestionAnswer) {
@@ -303,6 +318,13 @@ function checkForAnswer() {
                 }    
             }
 
+            if (playerScore <= 9) {
+                setTimeout(() => {
+                    $("main").toggle();
+                    $("#wrapper").toggle();
+                    countdown();
+                }, 1000)
+            }
             
             var g1 =  Math.floor(Math.random() * listOfPathIndexes.length); 
             gameMap[listOfPathIndexes[g1]] = 2;
@@ -312,12 +334,7 @@ function checkForAnswer() {
         }
         
     })
-    
-    setTimeout(() => {
-        $("main").toggle();
-        $("#wrapper").toggle();
-    }, 1000)
-    countdown();
+
    
 }
 
@@ -361,26 +378,26 @@ function handleEndGame() {
     let remarkColor = null
 
     
-    if (playerScore <= 3) {
-        remark = "Bad Grades, Keep Practicing."
-        remarkColor = "red"
-    }
-    else if (playerScore >= 4 && playerScore < 7) {
-        remark = "Average Grades, You can do better."
-        remarkColor = "orange"
-    }
-    else if (playerScore >= 7) {
+    if (wrongAttempt <= 3) {
         remark = "Excellent, Keep the good work going."
         remarkColor = "green"
     }
-    const playerGrade = (playerScore / 10) * 100
+    else if (wrongAttempt >= 4 && wrongAttempt < 7) {
+        remark = "Average, You can do better."
+        remarkColor = "orange"
+    }
+    else if (wrongAttempt <= 7) {
+        remark = "Bad, Keep Practicing."
+        remarkColor = "red"
+    }
+    
 
     
     document.getElementById('remarks').innerHTML = remark
     document.getElementById('remarks').style.color = remarkColor
-    document.getElementById('grade-percentage').innerHTML = playerGrade
+    
     document.getElementById('wrong-answers').innerHTML = wrongAttempt
-    document.getElementById('right-answers').innerHTML = playerScore
+    
     document.getElementById('score-modal').style.display = "flex"
 
 }
@@ -394,6 +411,7 @@ function closeScoreModal() {
     shuffledQuestions = []
     NextQuestion(indexNumber)
     document.getElementById('score-modal').style.display = "none"
+    window.location.reload();
 }
 
 
